@@ -22,7 +22,7 @@ resource "aws_iam_role" "eks_cluster_admin_access_iam_role" {
 }
 POLICY
 
-  depends_on = [aws_eks_node_group.eks_workers_node_group]
+  depends_on = [aws_eks_node_group.eks_cluster_workers_general_node_group]
 }
 
 # IAM Policy with admin access inside AWS account 
@@ -92,7 +92,7 @@ resource "aws_iam_user_policy_attachment" "manager" {
 
 # Best practice: use IAM roles due to temporary credentials
 resource "aws_eks_access_entry" "manager" {
-  cluster_name      = aws_eks_cluster.eks_cluster.name
+  cluster_name      = aws_eks_cluster.eks_cluster_instance.name
   principal_arn     = aws_iam_role.eks_cluster_admin_access_iam_role.arn
   kubernetes_groups = ["my-admin"] # K8S RABC Group Name
 }

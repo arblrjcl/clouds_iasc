@@ -71,3 +71,8 @@ variable "eks_cluster_service_ipv4_cidr" {
   type    = string
   default = "172.20.0.0/16"
 }
+
+variable "eks_addon_vpc_cni_version" {
+  type = string
+}
+

@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_VPC_ResourceController_po
 }
 
 # Reference: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
-resource "aws_eks_cluster" "eks_cluster" {
+resource "aws_eks_cluster" "eks_cluster_instance" {
   name     = "${var.project_name}_eks_cluster"
   role_arn = aws_iam_role.eks_iam_assume_role.arn
   version  = var.eks_kubernetes_version
@@ -130,13 +130,13 @@ resource "aws_iam_role_policy_attachment" "ecr_repositories_ro_access_policy_att
 
 # Get latest optimized AL2 AMI for the given EKS version
 data "aws_ssm_parameter" "eks_ami_release_version" {
-  name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks_cluster.version}/amazon-linux-2/recommended/release_version"
+  name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks_cluster_instance.version}/amazon-linux-2/recommended/release_version"
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/5.75.0/docs/resources/eks_node_group#labels-1
 # Worker nodes managed as an EC2 Auto Scaling group.
 resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
-  cluster_name    = aws_eks_cluster.eks_cluster.name
+  cluster_name    = aws_eks_cluster.eks_cluster_instance.name
   node_group_name = "${var.project_name}_eks_cluster_workers_general_node_group"
   node_role_arn   = aws_iam_role.eks_worker_nodes_iam_role.arn
   // Subnets to worker nodes
@@ -146,12 +146,13 @@ resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
   capacity_type   = "ON_DEMAND"
   instance_types  = var.eks_workers_general_node_group_ec2_instance_types
   release_version = nonsensitive(data.aws_ssm_parameter.eks_ami_release_version.value)
-
+  ami_type        = "AL2023_x86_64_STANDARD"
+  disk_size       = 20 # Default is 20GiB to node groups except for Windows. For Windows default is 50GiB
   # Cluster autoscaler configuration
   scaling_config {
     desired_size = 1
     max_size     = 10
-    min_size     = 0
+    min_size     = 1
   }
 
   # To be used for EKS cluster upgrades
@@ -167,7 +168,7 @@ resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
-    aws_eks_cluster.eks_cluster,
+    aws_eks_cluster.eks_cluster_instance,
     aws_iam_role_policy_attachment.eks_cluster_worker_nodes_policy_attachment,
     aws_iam_role_policy_attachment.eks_cni_policy_attachment,
     aws_iam_role_policy_attachment.ecr_repositories_ro_access_policy_attachment,
@@ -182,3 +183,13 @@ resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
     ignore_changes = [scaling_config[0].desired_size]
   }
 }
+
+data "aws_region" "current" {}
+
+resource "null_resource" "cluster" {
+  provisioner "local-exec" {
+    command = format("%s%s%s%s", "aws eks update-kubeconfig --name ", "${var.project_name}_eks_cluster", " --region ", "${data.aws_region.current.name}")
+  }
+  depends_on = [resource.aws_eks_node_group.eks_cluster_workers_general_node_group]
+}
+
