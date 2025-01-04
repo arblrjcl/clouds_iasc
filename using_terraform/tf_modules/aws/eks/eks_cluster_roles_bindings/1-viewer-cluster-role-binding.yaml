@@ -1,0 +1,13 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: readonly_cluster_role_binding
+roleRef:
+  kind: ClusterRole
+  name: readonly_user_cluster_role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: Group
+    name: readonly_user_group
+    apiGroup: rbac.authorization.k8s.io

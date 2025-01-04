@@ -1,0 +1,10 @@
+---
+# K8S cluster role to be assinged to required K8S User[s], K8S Group[s] and/or K8S SA[s]
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: readonly_user_cluster_role
+rules:
+  - apiGroups: ["*"]
+    resources: ["deployments", "configmaps", "pods", "secrets", "services"]
+    verbs: ["get", "list", "watch"]
