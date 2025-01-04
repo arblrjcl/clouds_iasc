@@ -1,0 +1,1 @@
+../common/twingate_provider.tf
