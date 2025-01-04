@@ -5,8 +5,10 @@ $
 $ civo --version
 Civo CLI v1.1.92
 $
+$
 $ eksctl version
 0.194.0
+$
 $
 $ packer -version
 Packer v1.11.2
