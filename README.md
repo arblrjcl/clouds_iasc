@@ -1,6 +1,4 @@
 
-
-
 $
 $ civo --version
 Civo CLI v1.1.92
