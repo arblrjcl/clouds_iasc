@@ -1,0 +1,5 @@
+
+resources:
+  - strimzi_kafka_node_pool.yaml
+  - strimzi_kafka_zk_cluster.yaml
+
