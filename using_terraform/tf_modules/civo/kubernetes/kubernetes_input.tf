@@ -22,3 +22,11 @@ variable "node_count" {
 variable "node_size" {
   type = string
 }
+
+variable "cluster_type" {
+  type = string
+}
+
+variable "cni_name" {
+  type = string
+}

@@ -1,7 +1,7 @@
 
 variable "twingate_api_token" {
   type    = string
-  default = ""       #  Use correct / required TWINGATE API TOKEN.
+  default = "" #  Use correct / required TWINGATE API TOKEN.
 }
 
 variable "twingate_network_or_account_name" {

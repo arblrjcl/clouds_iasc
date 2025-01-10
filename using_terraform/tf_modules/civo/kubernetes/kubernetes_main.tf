@@ -13,6 +13,8 @@ data "civo_firewall" "project_civo_network_firewall" {
 resource "civo_kubernetes_cluster" "civo_k3s_cluster" {
   name         = "${var.project_name}-k3s-cluster"
   applications = var.applications
+  cluster_type = var.cluster_type
+  cni          = var.cni_name
   network_id   = data.civo_network.project_civo_private_network.id
   firewall_id  = data.civo_firewall.project_civo_network_firewall.id
   pools {
@@ -22,13 +24,3 @@ resource "civo_kubernetes_cluster" "civo_k3s_cluster" {
   depends_on = [data.civo_firewall.project_civo_network_firewall]
 }
 
-data "civo_kubernetes_cluster" "civo_k3s_cluster_details" {
-  name       = "${var.project_name}-k3s-cluster"
-  depends_on = [resource.civo_kubernetes_cluster.civo_k3s_cluster]
-}
-
-resource "null_resource" "cluster" {
-  provisioner "local-exec" {
-    command = format("%s%s%s", "civo kubernetes config ", data.civo_kubernetes_cluster.civo_k3s_cluster_details.name, " --save")
-  }
-}

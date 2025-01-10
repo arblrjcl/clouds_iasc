@@ -35,6 +35,14 @@ resource "civo_firewall" "project_civo_network_firewall" {
   }
 
   ingress_rule {
+    label      = "Allow everything from my [private] public ip"
+    protocol   = "tcp"
+    port_range = "1-65535"
+    cidr       = ["${chomp(data.http.mypublicip.response_body)}/32"]
+    action     = "allow"
+  }
+
+  ingress_rule {
     label      = "K3S Cluster - API Server"
     protocol   = "tcp"
     port_range = "6443"
