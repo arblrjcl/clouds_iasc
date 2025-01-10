@@ -7,6 +7,14 @@ terraform {
       //version = "${var.tf_civo_provider_version}"
       //version = "~> ${var.tf_civo_provider_version}"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.14"
+    }
     twingate = {
       source = "twingate/twingate"
       //version = var.tf_twingate_provier_version
