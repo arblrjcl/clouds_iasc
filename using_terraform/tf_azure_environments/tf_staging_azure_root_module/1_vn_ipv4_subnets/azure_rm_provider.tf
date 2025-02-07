@@ -1,0 +1,1 @@
+../common/azure_rm_provider.tf
