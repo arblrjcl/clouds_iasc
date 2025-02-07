@@ -66,3 +66,12 @@ output "eks_cluster_vpc_public_subnets_ids" {
 output "eks_cluster_arn" {
   value = aws_eks_cluster.eks_cluster_instance.arn
 }
+
+output "eks_cluster_openid_connect_provider_arn" {
+  value = aws_iam_openid_connect_provider.eks_cluster_openid_connect_provider.arn
+}
+
+output "eks_cluster_openid_connect_provider_url" {
+  value = aws_iam_openid_connect_provider.eks_cluster_openid_connect_provider.url
+}
+

@@ -1,22 +1,22 @@
 
 output "civo_network_name" {
-  value = module.ipv4_private_network.civo_network_name
-  sensitive   = true
+  value     = module.ipv4_private_network.civo_network_name
+  sensitive = true
 }
 
 output "civo_network_id" {
-  value = module.ipv4_private_network.civo_network_id
-  sensitive   = true
+  value     = module.ipv4_private_network.civo_network_id
+  sensitive = true
 }
 
 output "civo_network_default_or_not" {
-  value = module.ipv4_private_network.civo_network_default_or_not
-  sensitive   = true
+  value     = module.ipv4_private_network.civo_network_default_or_not
+  sensitive = true
 }
 
 output "civo_network_label" {
-  value = module.ipv4_private_network.civo_network_label
-  sensitive   = true
+  value     = module.ipv4_private_network.civo_network_label
+  sensitive = true
 }
 
 /*output "ipv4_network_instance" { 
@@ -33,6 +33,6 @@ data "civo_network" "civo_default_network" {
 
 output "ipv4_default_network" {
   #value = module.ipv4_default_network_instance.ipv4_network_instance
-  value = data.civo_network.civo_default_network
-  sensitive   = true
+  value     = data.civo_network.civo_default_network
+  sensitive = true
 }

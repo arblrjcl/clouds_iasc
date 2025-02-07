@@ -1,6 +1,6 @@
 
 provider "aws" {
-  profile = "admin_user"
+  profile = var.aws_config_profile_name
   region  = var.aws_region
   //access_key =
   //secret_key = ""

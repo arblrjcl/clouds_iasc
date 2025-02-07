@@ -1,6 +1,6 @@
 
 module "eks_instance" {
-  source                              = "../../../tf_modules/aws/eks/"
+  source                              = "../../../../../tf_modules/aws/eks/"
   project_name                        = local.common_tags.PROJECT_NAME
   eks_iam_assume_role_tags            = merge(local.common_tags, { "TF_LAYER_NAME" : var.tf_layer_name })
   eks_kubernetes_version              = "1.30"
@@ -41,3 +41,6 @@ provider "kubectl" {
   cluster_ca_certificate = base64decode(yamldecode(data.aws_eks_cluster.eks_cluster_details.kubeconfig).clusters.0.cluster.certificate-authority-data)
   load_config_file       = false
 }
+
+# https://www.youtube.com/watch?v=Yequ94ZzN6U
+# EKS EFS CSI Driver Tutorial (ReadWriteMany) & OIDC: AWS EKS Kubernetes Tutorial - Part 9

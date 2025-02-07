@@ -113,3 +113,8 @@ variable "private_hosted_zone_name" {
   default = "example.com" # Use valid domain name instead of example.com
 }
 
+variable "aws_config_profile_name" {
+  type    = string
+  default = "admin_user"
+}
+

@@ -1,0 +1,1 @@
+../../../common/required_providers_versions.tf

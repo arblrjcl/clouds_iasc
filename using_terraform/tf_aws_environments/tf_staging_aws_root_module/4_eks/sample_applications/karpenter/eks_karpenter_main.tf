@@ -1,6 +1,6 @@
 
 module "eks_instance" {
-  source                              = "../../../tf_modules/aws/eks/"
+  source                              = "../../../../../tf_modules/aws/eks/"
   project_name                        = local.common_tags.PROJECT_NAME
   eks_iam_assume_role_tags            = merge(local.common_tags, { "TF_LAYER_NAME" : var.tf_layer_name })
   eks_kubernetes_version              = "1.30"

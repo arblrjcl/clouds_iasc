@@ -76,3 +76,6 @@ variable "eks_addon_vpc_cni_version" {
   type = string
 }
 
+variable "aws_config_profile_name" {
+  type = string
+}

@@ -184,12 +184,21 @@ resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
   }
 }
 
+resource "aws_iam_openid_connect_provider" "eks_cluster_openid_connect_provider" {
+  url = aws_eks_cluster.eks_cluster_instance.identity[0]["oidc"][0]["issuer"]
+
+  client_id_list = [
+    "sts.amazonaws.com",
+  ]
+  tags       = merge(var.eks_iam_assume_role_tags, { Name : "${var.project_name}_eks_iam_openid_connect_provider" })
+  depends_on = [aws_eks_node_group.eks_cluster_workers_general_node_group]
+}
+
 data "aws_region" "current" {}
 
 resource "null_resource" "cluster" {
   provisioner "local-exec" {
-    command = format("%s%s%s%s", "aws eks update-kubeconfig --name ", "${var.project_name}_eks_cluster", " --region ", "${data.aws_region.current.name}")
+    command = format("%s%s%s%s%s", "aws eks update-kubeconfig --name ", "${var.project_name}_eks_cluster", " --region ", "${data.aws_region.current.name} --profile ", "${var.aws_config_profile_name}")
   }
   depends_on = [resource.aws_eks_node_group.eks_cluster_workers_general_node_group]
 }
-
