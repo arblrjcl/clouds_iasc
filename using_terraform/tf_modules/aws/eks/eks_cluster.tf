@@ -29,6 +29,7 @@ data "aws_subnets" "vpc_public_subnets" {
   }
 }
 
+# AWS EKS instance requires an IAM role to access AWS API on our behalf to create required K8S resources
 resource "aws_iam_role" "eks_iam_assume_role" {
   name               = "${var.project_name}_eks_cluster_iam_assume_role"
   description        = "AWS EKS service uses this IAM role to create required AWS resources on our behalf for Kubernetes cluster[s]."
@@ -36,6 +37,7 @@ resource "aws_iam_role" "eks_iam_assume_role" {
   tags               = merge(var.eks_iam_assume_role_tags, { Name : "${var.project_name}_eks_iam_assume_role" })
 }
 
+# IAM policy to be attached to above mentioned IAM assume role
 resource "aws_iam_role_policy_attachment" "eks_iam_role_policy_attachment" {
   role = aws_iam_role.eks_iam_assume_role.name
 
@@ -85,6 +87,7 @@ resource "aws_eks_cluster" "eks_cluster_instance" {
   enabled_cluster_log_types = var.eks_cluster_control_plane_log_types
 }
 
+# AWS IAM role for K8S worker nodes managed by "Auto Scaling Group", not for nodes managed by Karpenter
 resource "aws_iam_role" "eks_worker_nodes_iam_role" {
   name               = "${var.project_name}_eks_worker_nodes_iam_role"
   description        = "Worker nodes use this IAM role"
@@ -128,13 +131,15 @@ resource "aws_iam_role_policy_attachment" "ecr_repositories_ro_access_policy_att
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-# Get latest optimized AL2 AMI for the given EKS version
+# Get latest optimized AL2023 AMI for the given EKS version
 data "aws_ssm_parameter" "eks_ami_release_version" {
-  name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks_cluster_instance.version}/amazon-linux-2/recommended/release_version"
+  #name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks_cluster_instance.version}/amazon-linux-2/recommended/release_version"
+  name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks_cluster_instance.version}/amazon-linux-2023/x86_64/standard/recommended/release_version"
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/5.75.0/docs/resources/eks_node_group#labels-1
-# Worker nodes managed as an EC2 Auto Scaling group.
+# EKS managed node group created as an AWS autoscaling group [Worker nodes managed as an EC2 Auto Scaling group.]
+# Karpenter doesn't use node autoscaling groups. Create required EC2 instances or nodes directly.
 resource "aws_eks_node_group" "eks_cluster_workers_general_node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster_instance.name
   node_group_name = "${var.project_name}_eks_cluster_workers_general_node_group"
