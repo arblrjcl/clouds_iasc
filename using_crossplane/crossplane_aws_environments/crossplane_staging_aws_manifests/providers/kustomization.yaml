@@ -1,0 +1,17 @@
+
+---
+#namePrefix: stagev1-
+#commonAnnotations: {}
+
+#apiVersion: kustomize.config.k8s.io/v1beta1
+#kind: Kustomization
+
+namespace: default
+resources:
+  - provider-aws-s3.yaml
+  - minikube-crossplane-provider-aws-config.yaml
+  - s3-bucket.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
