@@ -32,7 +32,6 @@ data "aws_subnets" "vpc_private_subnets" {
 }
 
 resource "aws_route53_zone" "private_hosted_zone" {
-  #count = length(data.aws_subnets.vpc_private_subnets.ids) >= 0 ? 1 : 0
   name = var.private_hosted_zone_name
   tags = var.private_hosted_zone_tags
   vpc {
@@ -40,7 +39,7 @@ resource "aws_route53_zone" "private_hosted_zone" {
   }
 }
 
-/*resource "aws_route53_zone" "environment_specific_private_hosted_zone" {
+resource "aws_route53_zone" "environment_specific_private_hosted_zone" {
   name = "${var.project_environment_name}.${var.private_hosted_zone_name}"
   tags = var.private_hosted_zone_tags
   vpc {
@@ -57,4 +56,4 @@ resource "aws_route53_record" "private_hosted_zone_delegation" {
   records    = aws_route53_zone.environment_specific_private_hosted_zone.name_servers
   depends_on = [aws_route53_zone.environment_specific_private_hosted_zone]
 }
-*/
+
